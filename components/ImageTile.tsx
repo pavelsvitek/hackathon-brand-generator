@@ -21,11 +21,9 @@ export default function ImageTile({
 
   return (
     <div
-      className={`rounded-xl border-4 border-transparent  my-3 relative ${
-        disabled ? 'cursor-not-allowed' : 'cursor-pointer'
-      }
-
-      ${selected && 'border-cyan-500'}`}
+      className={`rounded-xl border-4 border-transparent  my-3 relative
+      ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+      ${selected ? 'border-cyan-500' : ''}`}
       onClick={() => {
         if (disabled) {
           return
