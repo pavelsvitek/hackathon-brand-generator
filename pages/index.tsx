@@ -1,118 +1,357 @@
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { Inter, Source_Sans_3 } from 'next/font/google'
+import TopBar from '@/components/TopBar'
+import Heading from '@/components/Heading'
+import TextInput from '@/components/TextInput'
+import ActionButton from '@/components/ActionButton'
+import React from 'react'
+import ImageTile from '@/components/ImageTile'
+import useAutoFocus from '@/utils/hooks'
 
 const inter = Inter({ subsets: ['latin'] })
+const sourceSans3 = Source_Sans_3({ subsets: ['latin'] })
+
+type Step = 1 | 2 | 3 | 4 | 'loading'
+type Style = (typeof allStyles)[number]
+
+const allStyles = [
+  'enhance',
+  'line-art',
+  'low-poly',
+  'origami',
+  'digital-art',
+  'anime',
+  'photographic',
+  'comic-book',
+  'fantasy-art',
+  'analog-film',
+  'isometric',
+  'craft-clay',
+  'cinematic',
+  '3d-model'
+] as const
+
+const enabledStyles: Style[] = [
+  //
+  'enhance',
+  'low-poly',
+  'line-art',
+  'origami'
+]
+
+const isStyleEnabled = (style: Style) => enabledStyles.includes(style)
+
+const allActivities = [
+  {
+    key: 'writing',
+    image: '/images/image-1.png',
+    keywords: 'writing, journaling'
+  },
+  {
+    key: 'books',
+    image: '/images/image-2.png',
+    keywords: 'books, reading'
+  },
+  {
+    key: 'city',
+    image: '/images/image-3.png',
+    keywords: 'city lanscape, urban'
+  },
+  {
+    key: 'photography',
+    image: '/images/image-4.png',
+    keywords: 'photography, camera'
+  },
+  {
+    key: 'beach',
+    image: '/images/image-5.png',
+    keywords: 'beach, ocean, vacation'
+  },
+  {
+    key: 'technology',
+    image: '/images/image-6.png',
+    keywords: 'internet, computers, technology'
+  },
+  {
+    key: 'pets',
+    image: '/images/image-7.png',
+    keywords: 'pets, dogs, cats'
+  },
+  {
+    key: 'painting',
+    image: '/images/image-8.png',
+    keywords: 'painting, brunshing, art'
+  },
+  {
+    key: 'music',
+    image: '/images/image-9.png',
+    keywords: 'music, instruments, guitar'
+  },
+  {
+    key: 'travel',
+    image: '/images/image-10.png',
+    keywords: 'travel, world'
+  },
+  {
+    key: 'cooking',
+    image: '/images/image-11.png',
+    keywords: 'cooking, kitchen, food'
+  },
+  {
+    key: 'games',
+    image: '/images/image-12.png',
+    keywords: 'games, gaming'
+  },
+  {
+    key: 'sport',
+    image: '/images/image-13.png',
+    keywords: 'sport, excercise, workout'
+  },
+  {
+    key: 'nature',
+    image: '/images/image-14.png',
+    keywords: 'nature, hiking, mountains'
+  },
+  {
+    key: 'night-sky',
+    image: '/images/image-15.png',
+    keywords: 'night-sky, stars, moon'
+  },
+  {
+    key: 'universe',
+    image: '/images/image-16.png',
+    keywords: 'universe, sun, planets'
+  }
+] as const
+
+type Activity = (typeof allActivities)[number]
+type ActivityKey = Activity['key']
+
+const enabledActivityKeys: ActivityKey[] = [
+  'writing',
+  'books',
+  'city',
+  'photography',
+  'beach'
+]
+const enabledActivities = allActivities.filter((activity) =>
+  enabledActivityKeys.includes(activity.key)
+)
 
 export default function Home() {
+  const [step, setStep] = React.useState<Step>(1)
+  const [name, setName] = React.useState('')
+  const [job, setJob] = React.useState('')
+  const [activities, setActivities] = React.useState<ActivityKey[]>([])
+  const [colors, setColors] = React.useState<string[]>([])
+  const [styles, setStyles] = React.useState<Style[]>([])
+
+  function handleSetActivity(activity: ActivityKey) {
+    if (activities.length === 2 && !activities.includes(activity)) {
+      return
+    }
+    if (activities.includes(activity)) {
+      setActivities(activities.filter((a) => a !== activity))
+    } else {
+      setActivities([...activities, activity])
+    }
+  }
+
+  function handleSetColor(color: string) {
+    if (colors.length === 3 && !colors.includes(color)) {
+      return
+    }
+    if (colors.includes(color)) {
+      setColors(colors.filter((c) => c !== color))
+    } else {
+      setColors([...colors, color])
+    }
+  }
+
+  function handleToggleStyle(style: Style) {
+    setStyles([style])
+  }
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div className=''>
+      <TopBar />
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <main
+        className={`mx-auto min-h-screen max-w-screen-xl border-zinc-700 px-24 py-5 ${sourceSans3.className}`}
+      >
+        {/* Step 3 - Name and occupation */}
+        {step === 1 && (
+          <div className='mt-8'>
+            <Heading>Nice to meet you!</Heading>
+            {/*  */}
+            <div className='text-2xl mt-2'>
+              Introduce yourself and we can get started
+            </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+            <div className='text-xl mt-8'>What’s your name?</div>
+            <TextInput value={name} onChange={setName} />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+            <div className='text-xl mt-8'>
+              Now tell me in a few words what you do for a living
+            </div>
+            <TextInput value={job} onChange={setJob} />
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
+            <div className='text-xl mt-8'>
+              <ActionButton onClick={() => setStep(2)}>Next</ActionButton>
+            </div>
+          </div>
+        )}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        {/* Step 3 - Mood images */}
+        {step === 2 && (
+          <div className='text-xl mt-8'>
+            <Heading>Hi {name}! Let’s get to know each other</Heading>
+            <div className='text-2xl mt-2'>
+              Choose images of things you like and do, for both work and fun
+            </div>
+
+            <div className='flex flex-wrap justify-between mt-8'>
+              {allActivities.map((activity) => (
+                <ImageTile
+                  key={activity.key}
+                  disabled={!enabledActivityKeys.includes(activity.key)}
+                  src={activity.image}
+                  selected={activities.includes(activity.key)}
+                  onClick={() => handleSetActivity(activity.key)}
+                />
+              ))}
+              {/* <hr /> */}
+              {/* <ImageTile src='/images/image-1.png' />
+              <ImageTile src='/images/image-2.png' />
+              <ImageTile src='/images/image-3.png' />
+              <ImageTile src='/images/image-4.png' />
+              <ImageTile src='/images/image-5.png' />
+              <ImageTile src='/images/image-6.png' />
+              <ImageTile src='/images/image-7.png' />
+              <ImageTile src='/images/image-8.png' />
+              <ImageTile src='/images/image-9.png' />
+              <ImageTile src='/images/image-10.png' />
+              <ImageTile src='/images/image-11.png' />
+              <ImageTile src='/images/image-12.png' />
+              <ImageTile src='/images/image-13.png' />
+              <ImageTile src='/images/image-14.png' />
+              <ImageTile src='/images/image-15.png' />
+              <ImageTile src='/images/image-16.png' /> */}
+            </div>
+
+            <div className='mt-8'>
+              <ActionButton onClick={() => setStep(1)}>Back</ActionButton>
+              <ActionButton onClick={() => setStep(3)} className='ml-2'>
+                Next
+              </ActionButton>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3 - Colors */}
+        {step === 3 && (
+          <div className='text-xl mt-8'>
+            <Heading>Great! Now choose some colours</Heading>
+            <div className='text-2xl mt-2'>Choose up to 3 colours</div>
+
+            <div className='flex flex-wrap justify-between mt-8'>
+              <ImageTile
+                src='/images/color-blue.png'
+                selected={colors.includes('blue')}
+                onClick={() => handleSetColor('blue')}
+              />
+              <ImageTile
+                src='/images/color-yellow.png'
+                selected={colors.includes('yellow')}
+                onClick={() => handleSetColor('yellow')}
+              />
+              <ImageTile
+                src='/images/color-red.png'
+                selected={colors.includes('red')}
+                onClick={() => handleSetColor('red')}
+              />
+              <ImageTile
+                src='/images/color-green.png'
+                selected={colors.includes('green')}
+                onClick={() => handleSetColor('green')}
+              />
+              <ImageTile
+                src='/images/color-pink.png'
+                selected={colors.includes('pink')}
+                onClick={() => handleSetColor('pink')}
+              />
+              <ImageTile
+                src='/images/color-orange.png'
+                selected={colors.includes('orange')}
+                onClick={() => handleSetColor('orange')}
+              />
+              <ImageTile
+                src='/images/color-purple.png'
+                selected={colors.includes('purple')}
+                onClick={() => handleSetColor('purple')}
+              />
+              <ImageTile
+                src='/images/color-brown.png'
+                selected={colors.includes('brown')}
+                onClick={() => handleSetColor('brown')}
+              />
+              <ImageTile
+                src='/images/color-white.png'
+                selected={colors.includes('white')}
+                onClick={() => handleSetColor('white')}
+              />
+              <ImageTile
+                src='/images/color-grey.png'
+                selected={colors.includes('grey')}
+                onClick={() => handleSetColor('grey')}
+              />
+              <ImageTile
+                src='/images/color-black.png'
+                selected={colors.includes('black')}
+                onClick={() => handleSetColor('black')}
+              />
+              <ImageTile
+                src='/images/color-aqua.png'
+                selected={colors.includes('aqua')}
+                onClick={() => handleSetColor('aqua')}
+              />
+            </div>
+
+            <div className='mt-8'>
+              <ActionButton onClick={() => setStep(2)}>Back</ActionButton>
+              <ActionButton onClick={() => setStep(4)} className='ml-2'>
+                Next
+              </ActionButton>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4 - Style */}
+        {step === 4 && (
+          <div className='text-xl mt-8'>
+            <Heading>Excellent! Now choose a style</Heading>
+            <div className='text-2xl mt-2'>
+              We’ll combine everything to make your custom design
+            </div>
+
+            <div className='flex flex-wrap justify-between mt-8'>
+              {allStyles.map((style) => (
+                <ImageTile
+                  key={style}
+                  src={`/images/style-${style}.png`}
+                  disabled={!isStyleEnabled(style)}
+                  selected={styles.includes(style)}
+                  onClick={() => handleToggleStyle(style)}
+                />
+              ))}
+            </div>
+
+            <div className='mt-8'>
+              <ActionButton onClick={() => setStep(2)}>Back</ActionButton>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   )
 }
