@@ -16,7 +16,7 @@ export default function ImageTile({
 }) {
   const [isSelected_, setIsSelected] = React.useState(false)
 
-  const isSelected = selected !== undefined ? selected : isSelected_
+  // const isSelected = selected !== undefined ? selected : isSelected_
   // const isSelected = selected || isSelected_
 
   return (
@@ -25,7 +25,7 @@ export default function ImageTile({
         disabled ? 'cursor-not-allowed' : 'cursor-pointer'
       }
 
-      ${isSelected && 'border-cyan-600'}`}
+      ${selected && 'border-cyan-500'}`}
       onClick={() => {
         if (disabled) {
           return
@@ -40,11 +40,11 @@ export default function ImageTile({
     >
       {/*  */}
       <Image src={src} alt='activity' width={260} height={160} />
-      <div
-        className={`absolute top-0 left-0 right-0 bottom-0 ${
-          disabled ? 'backdrop-grayscale ' : ''
-        }`}
-      ></div>
+      {disabled && (
+        <div
+          className={`absolute top-0 left-0 right-0 bottom-0 backdrop-grayscale`}
+        ></div>
+      )}
     </div>
   )
 }

@@ -7,29 +7,15 @@ import ActionButton from '@/components/ActionButton'
 import React from 'react'
 import ImageTile from '@/components/ImageTile'
 import useAutoFocus from '@/utils/hooks'
+import axios from 'axios'
+import { ActivityKey, Style, allActivities, allStyles } from '@/types'
+import Spinner from '@/components/Spinner'
+import { imagesBase64 } from '@/images'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] })
 
-type Step = 1 | 2 | 3 | 4 | 'loading'
-type Style = (typeof allStyles)[number]
-
-const allStyles = [
-  'enhance',
-  'line-art',
-  'low-poly',
-  'origami',
-  'digital-art',
-  'anime',
-  'photographic',
-  'comic-book',
-  'fantasy-art',
-  'analog-film',
-  'isometric',
-  'craft-clay',
-  'cinematic',
-  '3d-model'
-] as const
+type Step = 1 | 2 | 3 | 4 | 'loading' | 'error' | 'result'
 
 const enabledStyles: Style[] = [
   //
@@ -40,92 +26,6 @@ const enabledStyles: Style[] = [
 ]
 
 const isStyleEnabled = (style: Style) => enabledStyles.includes(style)
-
-const allActivities = [
-  {
-    key: 'writing',
-    image: '/images/image-1.png',
-    keywords: 'writing, journaling'
-  },
-  {
-    key: 'books',
-    image: '/images/image-2.png',
-    keywords: 'books, reading'
-  },
-  {
-    key: 'city',
-    image: '/images/image-3.png',
-    keywords: 'city lanscape, urban'
-  },
-  {
-    key: 'photography',
-    image: '/images/image-4.png',
-    keywords: 'photography, camera'
-  },
-  {
-    key: 'beach',
-    image: '/images/image-5.png',
-    keywords: 'beach, ocean, vacation'
-  },
-  {
-    key: 'technology',
-    image: '/images/image-6.png',
-    keywords: 'internet, computers, technology'
-  },
-  {
-    key: 'pets',
-    image: '/images/image-7.png',
-    keywords: 'pets, dogs, cats'
-  },
-  {
-    key: 'painting',
-    image: '/images/image-8.png',
-    keywords: 'painting, brunshing, art'
-  },
-  {
-    key: 'music',
-    image: '/images/image-9.png',
-    keywords: 'music, instruments, guitar'
-  },
-  {
-    key: 'travel',
-    image: '/images/image-10.png',
-    keywords: 'travel, world'
-  },
-  {
-    key: 'cooking',
-    image: '/images/image-11.png',
-    keywords: 'cooking, kitchen, food'
-  },
-  {
-    key: 'games',
-    image: '/images/image-12.png',
-    keywords: 'games, gaming'
-  },
-  {
-    key: 'sport',
-    image: '/images/image-13.png',
-    keywords: 'sport, excercise, workout'
-  },
-  {
-    key: 'nature',
-    image: '/images/image-14.png',
-    keywords: 'nature, hiking, mountains'
-  },
-  {
-    key: 'night-sky',
-    image: '/images/image-15.png',
-    keywords: 'night-sky, stars, moon'
-  },
-  {
-    key: 'universe',
-    image: '/images/image-16.png',
-    keywords: 'universe, sun, planets'
-  }
-] as const
-
-type Activity = (typeof allActivities)[number]
-type ActivityKey = Activity['key']
 
 const enabledActivityKeys: ActivityKey[] = [
   'writing',
@@ -172,9 +72,53 @@ export default function Home() {
     setStyles([style])
   }
 
+  function handleReset() {
+    setGeneratedImages([])
+    setColors([])
+    setActivities([])
+    setStyles([])
+    setStep(1)
+  }
+
+  const [generatedImages, setGeneratedImages] = React.useState<string[]>([])
+
+  async function handleGenerate() {
+    setStep('loading')
+
+    try {
+      type Response = {
+        prompt: string
+        artifacts: {
+          base64: string
+          finishReason: 'SUCCESS' | 'ERROR'
+          seed: number
+        }[]
+      }
+      const response = await axios.post<Response>('/api/generate', {
+        name,
+        job,
+        activities,
+        colors,
+        styles
+      })
+
+      setGeneratedImages([
+        ...generatedImages,
+        ...response.data.artifacts
+          .filter((a) => a.finishReason === 'SUCCESS')
+          .map((a) => a.base64)
+      ])
+
+      setStep('result')
+    } catch (err) {
+      console.error(err)
+      setStep('error')
+    }
+  }
+
   return (
     <div className=''>
-      <TopBar />
+      {/* <TopBar /> */}
 
       <main
         className={`mx-auto min-h-screen max-w-screen-xl border-zinc-700 px-24 py-5 ${sourceSans3.className}`}
@@ -197,7 +141,9 @@ export default function Home() {
             <TextInput value={job} onChange={setJob} />
 
             <div className='text-xl mt-8'>
-              <ActionButton onClick={() => setStep(2)}>Next</ActionButton>
+              <ActionButton disabled={!name} onClick={() => setStep(2)}>
+                Next
+              </ActionButton>
             </div>
           </div>
         )}
@@ -220,28 +166,15 @@ export default function Home() {
                   onClick={() => handleSetActivity(activity.key)}
                 />
               ))}
-              {/* <hr /> */}
-              {/* <ImageTile src='/images/image-1.png' />
-              <ImageTile src='/images/image-2.png' />
-              <ImageTile src='/images/image-3.png' />
-              <ImageTile src='/images/image-4.png' />
-              <ImageTile src='/images/image-5.png' />
-              <ImageTile src='/images/image-6.png' />
-              <ImageTile src='/images/image-7.png' />
-              <ImageTile src='/images/image-8.png' />
-              <ImageTile src='/images/image-9.png' />
-              <ImageTile src='/images/image-10.png' />
-              <ImageTile src='/images/image-11.png' />
-              <ImageTile src='/images/image-12.png' />
-              <ImageTile src='/images/image-13.png' />
-              <ImageTile src='/images/image-14.png' />
-              <ImageTile src='/images/image-15.png' />
-              <ImageTile src='/images/image-16.png' /> */}
             </div>
 
             <div className='mt-8'>
               <ActionButton onClick={() => setStep(1)}>Back</ActionButton>
-              <ActionButton onClick={() => setStep(3)} className='ml-2'>
+              <ActionButton
+                disabled={activities.length === 0}
+                onClick={() => setStep(3)}
+                className='ml-2'
+              >
                 Next
               </ActionButton>
             </div>
@@ -319,7 +252,11 @@ export default function Home() {
 
             <div className='mt-8'>
               <ActionButton onClick={() => setStep(2)}>Back</ActionButton>
-              <ActionButton onClick={() => setStep(4)} className='ml-2'>
+              <ActionButton
+                disabled={colors.length === 0}
+                onClick={() => setStep(4)}
+                className='ml-2'
+              >
                 Next
               </ActionButton>
             </div>
@@ -348,6 +285,83 @@ export default function Home() {
 
             <div className='mt-8'>
               <ActionButton onClick={() => setStep(2)}>Back</ActionButton>
+              <ActionButton
+                disabled={styles.length === 0}
+                onClick={() => handleGenerate()}
+                className='ml-2'
+              >
+                Generate!
+              </ActionButton>
+            </div>
+          </div>
+        )}
+
+        {/* Step - Loading */}
+        {step === 'loading' && (
+          <div className='text-xl mt-8'>
+            <Heading>Generating suggestions .. </Heading>
+            <div className='text-2xl mt-2'>
+              Please, wait. This process can take up to 1 minute.
+            </div>
+
+            <div className='flex flex-wrap justify-between mt-8'>
+              <Spinner />
+            </div>
+
+            {/* <div className='mt-8'>
+              <ActionButton onClick={() => setStep(3)}>Back</ActionButton>
+            </div> */}
+          </div>
+        )}
+
+        {/* Step - Error */}
+        {step === 'error' && (
+          <div className='text-xl mt-8'>
+            <Heading>Something went wrong :-( </Heading>
+            <div className='text-2xl mt-2'>Let’s try again!</div>
+
+            <div className='flex flex-wrap justify-between mt-8'>
+              <ActionButton onClick={() => handleGenerate()}>
+                Try again!
+              </ActionButton>
+            </div>
+
+            <div className='mt-8'>
+              <ActionButton onClick={() => setStep(3)}>Back</ActionButton>
+            </div>
+          </div>
+        )}
+
+        {/* Step - Result */}
+        {step === 'result' && (
+          <div className='text-xl mt-8'>
+            <Heading> Choose your favorite</Heading>
+            <div className='text-2xl mt-2'>
+              Click on ‘variation’ to generate variations of a design or
+              generate more designs.
+            </div>
+
+            <div className='flex flex-wrap mt-8'>
+              {generatedImages.map((image, index) => (
+                <div key={index} className='mx-5 my-5'>
+                  <img
+                    src={`data:image/png;base64,${image}`}
+                    width={300}
+                    height='auto'
+                  />
+                </div>
+              ))}
+            </div>
+            <div className='flex justify-center'>
+              <ActionButton onClick={() => handleGenerate()}>
+                Generate 3 more suggestions!
+              </ActionButton>
+            </div>
+
+            <div className='mt-8'>
+              <ActionButton onClick={() => handleReset()}>
+                Start again!
+              </ActionButton>
             </div>
           </div>
         )}
