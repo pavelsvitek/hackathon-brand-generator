@@ -35,7 +35,7 @@ export const allActivities = [
   {
     key: 'city',
     image: '/images/image-3.png',
-    keywords: 'city lanscape, urban'
+    keywords: 'city lanscape, urban landscape'
   },
   {
     key: 'photography',

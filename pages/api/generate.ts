@@ -37,7 +37,7 @@ export default async function handler(
         {
           text: `Photograph ${selectedActivities
             .map((a) => a.keywords)
-            .join(' ')} landscape backlight highly detailed`,
+            .join(' ')} backlight highly detailed`,
           weight: 2
         }
         // {
@@ -104,6 +104,7 @@ export default async function handler(
         ...(response?.data || {})
       })
     } catch (err) {
+      console.log(err)
       console.error(err)
       return res.status(500).json({ status: 'error' })
     }
