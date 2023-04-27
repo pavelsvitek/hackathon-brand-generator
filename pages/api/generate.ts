@@ -35,9 +35,9 @@ export default async function handler(
     try {
       const textPrompts = [
         {
-          text: `Photograph ${selectedActivities
+          text: `${selectedActivities
             .map((a) => a.keywords)
-            .join(' ')} backlight highly detailed`,
+            .join(' ')} ${colors.join(' ')}`,
           weight: 2
         }
         // {
@@ -46,18 +46,18 @@ export default async function handler(
         // }
       ]
 
-      if (colors.length > 0) {
-        textPrompts.push({
-          text: colors.join(' '),
-          weight: 0.1
-        })
-        // colors.forEach((color) => {
-        //   textPrompts.push({
-        //     text: color,
-        //     weight: 0.1
-        //   })
-        // })
-      }
+      // if (colors.length > 0) {
+      // textPrompts.push({
+      //   text: colors.join(' '),
+      //   weight: 0.1
+      // })
+      // colors.forEach((color) => {
+      //   textPrompts.push({
+      //     text: color,
+      //     weight: 0.1
+      //   })
+      // })
+      // }
 
       const mlQueryPayload = {
         height: 512,
@@ -66,7 +66,7 @@ export default async function handler(
         // clip_guidance_preset: 'FAST_BLUE',
         // sampler: 'K_DPM_2_ANCESTRAL',
         samples: 3,
-        steps: 100,
+        steps: 50,
         style_preset: styles[0],
         text_prompts: textPrompts
         // style_preset: 'low-poly',

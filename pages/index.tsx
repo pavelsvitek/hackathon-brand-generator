@@ -81,14 +81,25 @@ export default function Home() {
     setStep(1)
   }
 
-  const [generatedImages, setGeneratedImages] = React.useState<string[]>([])
+  const [generatedImages, setGeneratedImages] = React.useState<
+    {
+      prompt: {
+        text: string
+        weight: number
+      }[]
+      images: string[]
+    }[]
+  >([])
 
   async function handleGenerate() {
     setStep('loading')
 
     try {
       type Response = {
-        prompt: string
+        prompt: {
+          text: string
+          weight: number
+        }[]
         artifacts: {
           base64: string
           finishReason: 'SUCCESS' | 'ERROR'
@@ -105,9 +116,12 @@ export default function Home() {
 
       setGeneratedImages([
         ...generatedImages,
-        ...response.data.artifacts
-          .filter((a) => a.finishReason === 'SUCCESS')
-          .map((a) => a.base64)
+        {
+          prompt: response.data.prompt,
+          images: response.data.artifacts
+            .filter((a) => a.finishReason === 'SUCCESS')
+            .map((a) => a.base64)
+        }
       ])
 
       setStep('result')
@@ -343,14 +357,25 @@ export default function Home() {
             </div>
 
             <div className='flex flex-wrap mt-8'>
-              {generatedImages.map((image, index) => (
-                <div key={index} className='mx-5 my-5'>
-                  <img
-                    src={`data:image/png;base64,${image}`}
-                    width={300}
-                    height='auto'
-                    alt='Generated design'
-                  />
+              {generatedImages.map((data, index) => (
+                <div key={index} className='mb-5'>
+                  <i>
+                    Prompt:{' '}
+                    <pre className='text-sm'>{JSON.stringify(data.prompt)}</pre>
+                  </i>
+
+                  <div className='flex flex-wrap mt-8'>
+                    {data.images.map((image, idx) => (
+                      <div key={`${index}-${idx}`} className='mx-3 my-0'>
+                        <img
+                          src={`data:image/png;base64,${image}`}
+                          width={300}
+                          height='auto'
+                          alt='Generated design'
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
