@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from 'next/image'
 import { Inter, Source_Sans_3 } from 'next/font/google'
 import TopBar from '@/components/TopBar'
@@ -348,6 +349,7 @@ export default function Home() {
                     src={`data:image/png;base64,${image}`}
                     width={300}
                     height='auto'
+                    alt='Generated design'
                   />
                 </div>
               ))}
