@@ -35,7 +35,7 @@ export const allActivities = [
   {
     key: 'city',
     image: '/images/image-3.png',
-    keywords: 'city lanscape, urban landscape'
+    keywords: 'city lanscape'
   },
   {
     key: 'photography',
@@ -45,7 +45,7 @@ export const allActivities = [
   {
     key: 'beach',
     image: '/images/image-5.png',
-    keywords: 'beach, ocean, vacation'
+    keywords: 'beach, ocean'
   },
   {
     key: 'technology',
