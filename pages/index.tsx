@@ -31,6 +31,7 @@ const isStyleEnabled = (style: Style) => enabledStyles.includes(style)
 const enabledActivityKeys: ActivityKey[] = [
   'writing',
   'books',
+  'coffee',
   'city',
   'photography',
   'beach'
@@ -48,7 +49,7 @@ export default function Home() {
   const [styles, setStyles] = React.useState<Style[]>([])
 
   function handleSetActivity(activity: ActivityKey) {
-    if (activities.length === 2 && !activities.includes(activity)) {
+    if (activities.length === 3 && !activities.includes(activity)) {
       return
     }
     if (activities.includes(activity)) {
@@ -106,7 +107,7 @@ export default function Home() {
           seed: number
         }[]
       }
-      const response = await axios.post<Response>('/api/generate', {
+      const response = await axios.post<Response[]>('/api/generate', {
         name,
         job,
         activities,
@@ -116,12 +117,18 @@ export default function Home() {
 
       setGeneratedImages([
         ...generatedImages,
-        {
-          prompt: response.data.prompt,
-          images: response.data.artifacts
+        ...response.data.map((res) => ({
+          prompt: res.prompt,
+          images: res.artifacts
             .filter((a) => a.finishReason === 'SUCCESS')
             .map((a) => a.base64)
-        }
+        }))
+        // {
+        //   prompt: response.data.prompt,
+        //   images: response.data.artifacts
+        //     .filter((a) => a.finishReason === 'SUCCESS')
+        //     .map((a) => a.base64)
+        // }
       ])
 
       setStep('result')
