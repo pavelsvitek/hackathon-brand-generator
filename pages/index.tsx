@@ -65,7 +65,7 @@ export default function Home() {
   const [styles, setStyles] = React.useState<Style[]>([])
 
   function handleSetActivity(activity: ActivityKey) {
-    if (activities.length === 3 && !activities.includes(activity)) {
+    if (activities.length === 2 && !activities.includes(activity)) {
       return
     }
     if (activities.includes(activity)) {
