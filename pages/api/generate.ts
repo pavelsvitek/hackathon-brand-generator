@@ -3,6 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import { Activity, ActivityKey, Style, allActivities } from '@/types'
 
+export const config = {
+  api: {
+    responseLimit: '30mb'
+  }
+}
+
 // type ResponseData = {
 //   status: string
 // }
