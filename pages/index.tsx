@@ -29,16 +29,32 @@ const enabledStyles: Style[] = [
 const isStyleEnabled = (style: Style) => enabledStyles.includes(style)
 
 const enabledActivityKeys: ActivityKey[] = [
-  'writing',
+  // 'writing',
   'books',
   'coffee',
   'city',
   'photography',
-  'beach'
+  'beach',
+  'pets',
+  'travel',
+  'cooking'
 ]
 const enabledActivities = allActivities.filter((activity) =>
   enabledActivityKeys.includes(activity.key)
 )
+
+const sortedActivities = [...allActivities].sort((a, b) => {
+  const isAEnabled = enabledActivityKeys.includes(a.key)
+  const isBEnabled = enabledActivityKeys.includes(b.key)
+
+  if (isAEnabled && isBEnabled) {
+    return 0
+  }
+  if (isAEnabled) {
+    return -1
+  }
+  return 1
+})
 
 export default function Home() {
   const [step, setStep] = React.useState<Step>(1)
@@ -179,7 +195,7 @@ export default function Home() {
             </div>
 
             <div className='flex flex-wrap justify-between mt-8'>
-              {allActivities.map((activity) => (
+              {sortedActivities.map((activity) => (
                 <ImageTile
                   key={activity.key}
                   disabled={!enabledActivityKeys.includes(activity.key)}
@@ -388,7 +404,7 @@ export default function Home() {
             </div>
             <div className='flex justify-center'>
               <ActionButton onClick={() => handleGenerate()}>
-                Generate 3 more suggestions!
+                Generate more suggestions!
               </ActionButton>
             </div>
 

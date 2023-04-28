@@ -74,35 +74,35 @@ export const allActivities = [
     key: 'pets',
     image: '/images/image-7.png',
     keywords: 'pets, dogs, cats',
-    variations: []
+    variations: ['puppies', 'kittens']
   },
   {
     key: 'painting',
     image: '/images/image-8.png',
-    keywords: 'painting, brunshing, art',
-    variations: []
+    keywords: 'painting, art',
+    variations: ['canvas', 'mural', 'paint pallete']
   },
   {
     key: 'music',
-    image: '/images/image-9.png',
+    image: '/images/image-12.png',
     keywords: 'music, instruments, guitar',
-    variations: []
+    variations: ['piano', 'microphone', 'electric guitar', 'drumset']
   },
   {
     key: 'travel',
-    image: '/images/image-10.png',
+    image: '/images/image-9.png',
     keywords: 'travel, world',
-    variations: []
+    variations: ['plane', 'train', 'car', 'vw van']
   },
   {
     key: 'cooking',
     image: '/images/image-11.png',
     keywords: 'cooking, kitchen, food',
-    variations: []
+    variations: ['vegetable', 'meat', 'steaks', 'pasta']
   },
   {
     key: 'games',
-    image: '/images/image-12.png',
+    image: '/images/image-10.png',
     keywords: 'games, gaming',
     variations: []
   },
